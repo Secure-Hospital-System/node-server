@@ -896,3 +896,48 @@ app.post('/api/patient/insurance/claim/insert', (req, res) => {
 
     });
 });
+
+
+// Fetch all users
+app.get('/api/admin/users', (req, res) => {
+    var query = "SELECT \"userID\", name, email, \"accountType\"	FROM public.\"user\"";
+    client.query(query, function (err, result) {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
+        res.json(result.rows)
+    });
+});
+
+app.get('/api/admin/delete/user/:Id', (req, res) => {
+    var query = "DELETE FROM public.\"user\"	WHERE \"userID\"="+req.params.Id;
+    client.query(query, function (err, result) {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
+        res.json(result.rows)
+    });
+});
+
+
+// Update  a user
+app.post('/api/admin/delete/user/update', (req, res) => {
+    var name = "\'" + req.body.name + "\'";
+    var email = "\'" + req.body.email + "\'";
+    var accountType = "\'" + req.body.accountType + "\'";
+    var userID = "\'" + req.body.userID + "\'";
+    var query = "UPDATE public.\"user\" SET name=" + name + ", email=" + email + ", \"accountType\"=" + accountType + "	WHERE \"userID\"=" + userID + ";";
+    console.log(query);
+    client.query(query, function (err, result) {
+        if (err) {
+            console.log('Error:', err);
+            res.json(err.detail);
+        } else {
+            // console.log(result);
+            res.json(true)
+        }
+
+    });
+});
