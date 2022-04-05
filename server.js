@@ -2,8 +2,6 @@ const express = require('express');
 const { Client } = require('pg');
 const app = express();
 const cors = require('cors')
-// var dbConnect = require('./dbConfig.js');
-
 const http = require('http');
 
 const client = new Client({
@@ -17,13 +15,6 @@ const client = new Client({
 app.use(cors());
 app.use(express.json({ limit: '50mb', extended: true }));
 app.use(express.urlencoded());
-// var query =  "SELECT * from users";
-
-// // var query = "SELECT * FROM public.\"availability\" Order by \"doctorID\" asc ;";
-// // var query = "SELECT \"doctorID\", name, date, \"startTime\", \"endTime\" FROM public.availability as availability, public.user as u WHERE availability.\"doctorID\"=u.\"userID\";"
-// var ascii = '\'yash12123\'';
-// var email = '\'yash4596134\'';
-// var query = "INSERT INTO public.\"oneTimePasscode\"(email, \"time\", passcode) VALUES ("+ascii+", now(), "+email+")";
 var query = "SELECT name, age, gender, address, \"phoneNumber\", \"creditCard\" FROM public.user as u, public.patient as p where u.\"userID\" = p.\"patientID\" and u.\"userID\"=1";
 
 client.connect((err) => {
@@ -63,9 +54,11 @@ app.get('/api/patient/profile/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows[0])
         }
-        res.json(result.rows[0])
     });
 
 }
@@ -78,9 +71,11 @@ app.get('/api/patient/diagnosis/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 }
@@ -93,9 +88,11 @@ app.get('/api/patient/prescription/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 }
@@ -108,9 +105,12 @@ app.get('/api/patient/report/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
+
     });
 
 }
@@ -121,12 +121,15 @@ app.get('/api/patient/report/:Id', (req, res) => {
 app.get('/api/appointments', (req, res) => {
     // console.log(req.params.Id);
     var query = "SELECT \"doctorID\", name, \"date\", \"time\" FROM (SELECT \"doctorID\", \"date\", \"time\" FROM public.availability EXCEPT (SELECT \"doctorID\", \"date\", \"time\" FROM public.appointment WHERE status != 'completed' AND status != 'approved')) as availability, public.user WHERE \"doctorID\" = \"userID\"";
+    console.log(query);
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 }
 );
@@ -158,9 +161,11 @@ app.get('/api/patient/appointment/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 }
 );
@@ -190,21 +195,6 @@ app.get('/api/insuranceStaff', (req, res) => res.json('Lab Staff Data'));
 
 app.get('/api/admin', (req, res) => res.json('Admin Data'));
 
-
-
-// Fetch Availability of Doctors
-
-//DELETE an Appointment
-// DELETE FROM public.appointment
-// 	WHERE "patientID"="+ +", AND "doctorID"="+ +", AND "date"='"+ +",' AND "time"='"+ +",';\
-
-
-// Doctor Names
-// SELECT "doctorID", name
-// FROM public.doctor as d, public.user as u
-// WHERE d."doctorID" = u."userID";
-
-
 // Lab Staff
 
 
@@ -215,9 +205,11 @@ app.get('/api/labStaff/reports', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
@@ -299,9 +291,11 @@ app.get('/api/labStaff/diagnosis/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
@@ -312,9 +306,11 @@ app.get('/api/labStaff/labTests', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
@@ -350,9 +346,11 @@ app.get('/api/doctor/patient/records/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
@@ -490,9 +488,11 @@ app.get('/api/doctor/patient/report/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 }
@@ -534,9 +534,11 @@ app.get('/api/fetchAllDoctors', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -549,9 +551,11 @@ app.get('/api/fetchAllAppointments', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -684,9 +688,11 @@ app.get('/api/labstaff/fetchAllLabTests', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -804,9 +810,11 @@ app.get('/api/hospitalStaff/fetachAllTransactions', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -817,9 +825,11 @@ app.get('/api/patient/transaction/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -854,9 +864,11 @@ app.get('/api/hospitalStaff/fetchAllBills', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -868,9 +880,11 @@ app.get('/api/patient/bills/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 
 });
@@ -904,9 +918,11 @@ app.get('/api/admin/users', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
@@ -915,9 +931,11 @@ app.get('/api/admin/delete/user/:Id', (req, res) => {
     client.query(query, function (err, result) {
         if (err) {
             console.log(err);
-            throw err;
+            // throw err;
+            res.json(err.detail);
+        }else {
+            res.json(result.rows)
         }
-        res.json(result.rows)
     });
 });
 
